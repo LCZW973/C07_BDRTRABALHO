@@ -11,4 +11,4 @@ Cursos e faculdades não devem ser tratados como entidades dependentes entre si,
 A relação correta ocorre no contexto de uma oferta, onde uma faculdade oferece um curso em um determinado vestibular, com atributos próprios como número de vagas e nota de corte.
 Essa relação é representada por uma tabela associativa que envolve curso, faculdade e vestibular simultaneamente, caracterizando uma relação ternária no modelo conceitual.
 Já a participação do vestibulando no processo seletivo é independente dessa oferta, sendo corretamente modelada como uma relação entre vestibulando e vestibular
-
+Devido as dificuldades imposta por uma relacao ternaria o objetivo deve ser  a decomposicao em relacoes binarias melhores
