@@ -3,7 +3,7 @@ CREATE DATABASE faculdade;
 USE faculdade;
 
 
--- Criar no mínimo 5 tabelas, incluindo atributos e relacionamentos coesos entre elas --
+-- CROAR NO MINIMO 5 TABELAS E RELACIONAMENTOS COESES ENTRE ELAS --
 CREATE TABLE supervisor(
     cpf BIGINT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -116,19 +116,7 @@ CREATE TABLE vestibulando_realiza_prova(
     REFERENCES prova(id)
 );
 
--- Criar 2 usuários arbitrários (sua escolha para nome e senha) --
-CREATE USER 'Elton'@'%' IDENTIFIED BY '00o00';
-CREATE USER 'Elias'@'%' IDENTIFIED BY '00i00';
-
--- Criar 1 Role, garantir no mínimo 2 privilégios e inserir os usuários nela por padrão --
-CREATE ROLE 'Insert_select';
-GRANT INSERT,SELECT ON faculdade.* TO 'Insert_select';
-GRANT  'Insert_select' TO 'Elton'@'%';
-GRANT  'Insert_select' TO 'Elias'@'%';
-SET DEFAULT ROLE  'Insert_select'  TO 'Elton'@'%';
-SET DEFAULT ROLE  'Insert_select'  TO 'Elias'@'%';
-
-
+-- INSERIR NO MINIMO 5REGISTROS PARA CADA TABELA --
 -- SUPERVISOR--
 INSERT INTO supervisor VALUES
 (11111111111,'Carlos Silva','carlos@gmail.com'),
@@ -206,3 +194,18 @@ INSERT INTO vestibulando_realiza_prova VALUES
 (99933333333,3,9.2),
 (99944444444,4,6.8),
 (99955555555,5,8.9);
+
+-- CRIAR 2 USARUIS ARBITRARIOS--
+CREATE USER 'Elton'@'%' IDENTIFIED BY '00o00';
+CREATE USER 'Elias'@'%' IDENTIFIED BY '00i00';
+
+-- CRIAR1 ROLE E GARANTIR NO MINIMO 2 PRIVILEGIOD E INSERIR USARRIOS NELA POR PADRAO --
+CREATE ROLE 'Insert_select';
+GRANT INSERT,SELECT ON faculdade.* TO 'Insert_select';
+GRANT  'Insert_select' TO 'Elton'@'%';
+GRANT  'Insert_select' TO 'Elias'@'%';
+SET DEFAULT ROLE  'Insert_select'  TO 'Elton'@'%';
+SET DEFAULT ROLE  'Insert_select'  TO 'Elias'@'%';
+
+
+SELECT * FROM vestibulando ;
