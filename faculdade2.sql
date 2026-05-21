@@ -207,5 +207,67 @@ GRANT  'Insert_select' TO 'Elias'@'%';
 SET DEFAULT ROLE  'Insert_select'  TO 'Elton'@'%';
 SET DEFAULT ROLE  'Insert_select'  TO 'Elias'@'%';
 
+DELIMITER $$
+DROP FUNCTION IF EXISTS contavagas $$
+CREATE FUNCTION contavagas () 
+RETURNS INT 
+DETERMINISTIC
+BEGIN
+
+    DECLARE vagasTotais INT;
+
+    SELECT SUM(vagas)
+    INTO vagasTotais
+    FROM sala;
+
+    RETURN vagasTotais;
+
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS contavestibulandos $$
+
+CREATE FUNCTION contavestibulandos () 
+RETURNS INT 
+DETERMINISTIC
+BEGIN
+
+    DECLARE numerovestibulandos INT;
+
+    SELECT COUNT(cpf)
+    INTO numerovestibulandos
+    FROM vestibulando;
+
+    RETURN numerovestibulandos;
+
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER controlavagas
+BEFORE INSERT ON vestibulando
+FOR EACH ROW
+BEGIN
+
+    DECLARE vagasTotais INT;
+    DECLARE vestibulandos INT;
+
+    SET vagasTotais = contavagas();
+    SET vestibulandos = contavestibulandos();
+
+    IF vestibulandos >= vagasTotais THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Sem vagas disponiveis';
+    END IF;
+
+END$$
+
+DELIMITER ;
+
 
 SELECT * FROM vestibulando ;
