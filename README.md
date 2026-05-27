@@ -1,12 +1,13 @@
 # C07_BDRTRABALHO
 
 #PARTICIPANTES
-Nome:Leonardo Cruz Zanin
-Mat: 2169
-Nome:
-Mat:
-Nome:
-Mat:
+Nome: Leonardo Cruz Zanin 
+Matrícula: GEC 2169
+Nome: João Pedro Torrano Dias 
+Matrícula: GES 273
+Nome: Nathan Bispo de Aguiar 
+Matrícula: GES 650
+ 
 
 
 
