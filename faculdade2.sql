@@ -2,100 +2,6 @@ DROP DATABASE IF EXISTS faculdade;
 CREATE DATABASE faculdade;
 USE faculdade;
 
--- CRIAR 2 USARUIS ARBITRARIOS--
-DROP USER IF EXISTS 'Elton'@'%';
-DROP USER IF EXISTS 'Elias'@'%';
- 
-CREATE USER 'Elton'@'%' IDENTIFIED BY '00o00';
-CREATE USER 'Elias'@'%' IDENTIFIED BY '00i00';
- 
--- CRIAR1 ROLE E GARANTIR NO MINIMO 2 PRIVILEGIOD E INSERIR USARRIOS NELA POR PADRAO --
-DROP ROLE IF EXISTS 'Insert_select';
- 
-CREATE ROLE 'Insert_select';
-GRANT INSERT,SELECT ON faculdade.* TO 'Insert_select';
-GRANT  'Insert_select' TO 'Elton'@'%';
-GRANT  'Insert_select' TO 'Elias'@'%';
-SET DEFAULT ROLE  'Insert_select'  TO 'Elton'@'%';
-SET DEFAULT ROLE  'Insert_select'  TO 'Elias'@'%';
- 
- 
--- FUNCAO RETORNA A VAGA DA SALA SELECIONADA--
-DELIMITER $$
-DROP FUNCTION IF EXISTS retornavagas $$
-CREATE FUNCTION retornavagas (id_sala INT ) 
-RETURNS INT 
-DETERMINISTIC
-BEGIN
- 
-    DECLARE vagasTotais INT;
-    SELECT vagas
-    INTO vagasTotais
-    FROM sala WHERE numero = id_sala ;
-    RETURN vagasTotais;
-END$$
-DELIMITER ;
- 
--- FUNCAO QUE CALCULA O NUMERO DE VESTIBULANDO ATUAIS NA SALA SELECIONADA --
-DELIMITER $$
-DROP FUNCTION IF EXISTS contavestibulandos $$
-CREATE FUNCTION contavestibulandos ( id_sala INT) 
-RETURNS INT 
-DETERMINISTIC
-BEGIN
- 
-    DECLARE numerovestibulandos INT;
- 
-    SELECT COUNT(cpf)
-    INTO numerovestibulandos
-    FROM vestibulando  WHERE vestibulando.numero_sala = id_sala;
- 
-    RETURN numerovestibulandos;
- 
-END$$
-DELIMITER ;
- 
--- TRIGGERS QUE USA AS FUNCOES ANTERIORES PARA CONTROLAR O NUMERO DE VESTIBULANDOS EM SALA DE ACORDO COM AS VAGAS POR SALA--
-DELIMITER $$
-CREATE TRIGGER controlavagas
-BEFORE INSERT ON vestibulando
-FOR EACH ROW
-BEGIN
- 
-    DECLARE vagasTotais INT;
-    DECLARE vestibulandos INT;
- 
-    SET vagasTotais = retornavagas(NEW.numero_sala);
-    SET vestibulandos = contavestibulandos(NEW.numero_sala);
- 
-    IF vestibulandos >= vagasTotais THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Sem vagas disponiveis na sala ';
-    END IF;
- 
-END$$
-DELIMITER ;
-
-DELIMITER $$
-CREATE TRIGGER controlavagasupdate
-BEFORE UPDATE ON vestibulando
-FOR EACH ROW
-BEGIN
- 
-    DECLARE vagasTotais INT;
-    DECLARE vestibulandos INT;
- 
-    SET vagasTotais = retornavagas(NEW.numero_sala);
-    SET vestibulandos = contavestibulandos(NEW.numero_sala);
- 
-    IF vestibulandos >= vagasTotais THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Sem vagas disponiveis na sala ';
-    END IF;
- 
-END$$
-DELIMITER ;
- 
 -- CRIAR NO MINIMO 5 TABELAS E RELACIONAMENTOS COESES ENTRE ELAS --
 CREATE TABLE supervisor(
     cpf BIGINT PRIMARY KEY,
@@ -208,6 +114,83 @@ CREATE TABLE vestibulando_realiza_prova(
     FOREIGN KEY (id_prova)
     REFERENCES prova(id)
 );
+
+
+-- CRIAR 2 USARUIS ARBITRARIOS--
+DROP USER IF EXISTS 'Elton'@'%';
+DROP USER IF EXISTS 'Elias'@'%';
+ 
+CREATE USER 'Elton'@'%' IDENTIFIED BY '00o00';
+CREATE USER 'Elias'@'%' IDENTIFIED BY '00i00';
+ 
+-- CRIAR1 ROLE E GARANTIR NO MINIMO 2 PRIVILEGIOD E INSERIR USARRIOS NELA POR PADRAO --
+DROP ROLE IF EXISTS 'Insert_select';
+ 
+CREATE ROLE 'Insert_select';
+GRANT INSERT,SELECT ON faculdade.* TO 'Insert_select';
+GRANT  'Insert_select' TO 'Elton'@'%';
+GRANT  'Insert_select' TO 'Elias'@'%';
+SET DEFAULT ROLE  'Insert_select'  TO 'Elton'@'%';
+SET DEFAULT ROLE  'Insert_select'  TO 'Elias'@'%';
+ 
+ 
+-- FUNCAO RETORNA A VAGA DA SALA SELECIONADA--
+DELIMITER $$
+DROP FUNCTION IF EXISTS retornavagas $$
+CREATE FUNCTION retornavagas (id_sala INT ) 
+RETURNS INT 
+DETERMINISTIC
+BEGIN
+ 
+    DECLARE vagasTotais INT;
+    SELECT vagas
+    INTO vagasTotais
+    FROM sala WHERE numero = id_sala ;
+    RETURN vagasTotais;
+END$$
+DELIMITER ;
+ 
+-- FUNCAO QUE CALCULA O NUMERO DE VESTIBULANDO ATUAIS NA SALA SELECIONADA --
+DELIMITER $$
+DROP FUNCTION IF EXISTS contavestibulandos $$
+CREATE FUNCTION contavestibulandos ( id_sala INT) 
+RETURNS INT 
+DETERMINISTIC
+BEGIN
+ 
+    DECLARE numerovestibulandos INT;
+ 
+    SELECT COUNT(cpf)
+    INTO numerovestibulandos
+    FROM vestibulando  WHERE vestibulando.numero_sala = id_sala;
+ 
+    RETURN numerovestibulandos;
+ 
+END$$
+DELIMITER ;
+ 
+-- TRIGGERS QUE USA AS FUNCOES ANTERIORES PARA CONTROLAR O NUMERO DE VESTIBULANDOS EM SALA DE ACORDO COM AS VAGAS POR SALA--
+DELIMITER $$
+CREATE TRIGGER controlavagas
+BEFORE INSERT ON vestibulando
+FOR EACH ROW
+BEGIN
+ 
+    DECLARE vagasTotais INT;
+    DECLARE vestibulandos INT;
+ 
+    SET vagasTotais = retornavagas(NEW.numero_sala);
+    SET vestibulandos = contavestibulandos(NEW.numero_sala);
+ 
+    IF vestibulandos >= vagasTotais THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Sem vagas disponiveis na sala ';
+    END IF;
+ 
+END$$
+DELIMITER ;
+
+
  
 -- INSERIR NO MINIMO 5REGISTROS PARA CADA TABELA --
 -- SUPERVISOR--
@@ -219,7 +202,7 @@ INSERT INTO supervisor VALUES
 (55555555555,'Joao Rocha','joao@gmail.com');
 -- SALA --
 INSERT INTO sala VALUES
-(101,2,11111111111),
+(101,3,11111111111),
 (102,35,22222222222),
 (103,50,33333333333),
 (104,45,44444444444),
