@@ -17,6 +17,7 @@ CREATE TABLE sala(
     CONSTRAINT fk_sala_supervisor
     FOREIGN KEY (cpf_supervisor)
     REFERENCES supervisor(cpf)
+    ON DELETE SET NULL
 );
  
 CREATE TABLE vestibulando(
@@ -28,6 +29,7 @@ CREATE TABLE vestibulando(
     CONSTRAINT fk_vestibulando_sala
     FOREIGN KEY (numero_sala)
     REFERENCES sala(numero)
+    ON DELETE SET NULL
 );
  
 CREATE TABLE vestibular(
@@ -44,6 +46,7 @@ CREATE TABLE materia(
     CONSTRAINT fk_materia_vestibular
     FOREIGN KEY (id_vestibular)
     REFERENCES vestibular(id)
+    ON DELETE SET NULL
 );
  
 CREATE TABLE vestibulando_presta_vestibular(
@@ -55,11 +58,13 @@ CREATE TABLE vestibulando_presta_vestibular(
  
     CONSTRAINT fk_vpv_vestibular
     FOREIGN KEY (id_vestibular)
-    REFERENCES vestibular(id),
+    REFERENCES vestibular(id)
+    ON DELETE CASCADE,
  
     CONSTRAINT fk_vpv_vestibulando
     FOREIGN KEY (cpf_vestibulando)
     REFERENCES vestibulando(cpf)
+    ON DELETE CASCADE
 );
  
 CREATE TABLE curso(
@@ -76,11 +81,13 @@ CREATE TABLE curso_oferece_vestibular(
  
     CONSTRAINT fk_cov_vestibular
     FOREIGN KEY (id_vestibular)
-    REFERENCES vestibular(id),
+    REFERENCES vestibular(id)
+    ON DELETE CASCADE,
  
     CONSTRAINT fk_cov_curso
     FOREIGN KEY (id_curso)
     REFERENCES curso(id)
+    ON DELETE CASCADE
 );
  
 CREATE TABLE corretor(
@@ -97,6 +104,7 @@ CREATE TABLE prova(
     CONSTRAINT fk_prova_corretor
     FOREIGN KEY (cpf_corretor)
     REFERENCES corretor(cpf)
+    ON DELETE SET NULL
 );
  
 CREATE TABLE vestibulando_realiza_prova(
@@ -108,11 +116,13 @@ CREATE TABLE vestibulando_realiza_prova(
  
     CONSTRAINT fk_vrp_vestibulando
     FOREIGN KEY (cpf_vestibulando)
-    REFERENCES vestibulando(cpf),
+    REFERENCES vestibulando(cpf)
+    ON DELETE CASCADE,
  
     CONSTRAINT fk_vrp_prova
     FOREIGN KEY (id_prova)
     REFERENCES prova(id)
+    ON DELETE CASCADE
 );
 
 
@@ -265,10 +275,21 @@ INSERT INTO prova(edicao,cpf_corretor) VALUES
 (2025,88855555555);
 -- VESTIBULANDO_REALIZA_PROVA --
 INSERT INTO vestibulando_realiza_prova VALUES
-(99911111111,1,8.5),
-(99922222222,2,7.0),
-(99933333333,3,9.2),
-(99944444444,4,6.8),
-(99955555555,5,8.9);
+(99911111111,1,85),
+(99922222222,2,70),
+(99933333333,3,92),
+(99944444444,4,68),
+(99955555555,5,89);
  
 SELECT * FROM vestibulando;
+SELECT * FROM supervisor;
+SELECT * FROM corretor;
+SELECT * FROM sala;
+SELECT * FROM vestibular;
+SELECT * FROM materia;
+SELECT * FROM vestibulando_presta_vestibular;
+SELECT * FROM curso;
+SELECT * FROM curso_oferece_vestibular;
+SELECT * FROM corretor;
+SELECT * FROM prova;
+SELECT * FROM vestibulando_realiza_prova;
